@@ -77,10 +77,16 @@ func (c Cursor) String() string {
 	return string(c)
 }
 
-type Date time.Time
+type Date struct {
+	Time        time.Time
+	IncludeTime bool
+}
 
 func (d *Date) String() string {
-	return time.Time(*d).Format(time.RFC3339)
+	if d.IncludeTime {
+		return d.Time.Format(time.RFC3339)
+	}
+	return d.Time.Format("2006-01-02")
 }
 
 func (d Date) MarshalText() ([]byte, error) {
@@ -88,6 +94,7 @@ func (d Date) MarshalText() ([]byte, error) {
 }
 
 func (d *Date) UnmarshalText(data []byte) error {
+	includeTime := true
 	t, err := time.Parse(time.RFC3339, string(data))
 
 	// Because the API does not distinguish between datetime with a
@@ -101,10 +108,14 @@ func (d *Date) UnmarshalText(data []byte) error {
 				// Still cannot parse it, nothing else to try.
 				return err
 			}
+			includeTime = false
 		}
 	}
 
-	*d = Date(t)
+	*d = Date{
+		Time:        t,
+		IncludeTime: includeTime,
+	}
 	return nil
 }
 
