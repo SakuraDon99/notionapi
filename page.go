@@ -47,6 +47,7 @@ func (pc *PageClient) Create(ctx context.Context, requestBody *PageCreateRequest
 type PageUpdateRequest struct {
 	Properties Properties `json:"properties"`
 	Archived   bool       `json:"archived"`
+	Icon       *Icon      `json:"icon,omitempty"`
 }
 
 // Update https://developers.notion.com/reference/patch-page
@@ -88,6 +89,7 @@ type PageCreateRequest struct {
 	Parent     Parent     `json:"parent"`
 	Properties Properties `json:"properties"`
 	Children   []Block    `json:"children,omitempty"`
+	Icon       *Icon      `json:"icon,omitempty"`
 }
 
 func handlePageResponse(res *http.Response) (*Page, error) {
